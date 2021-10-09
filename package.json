@@ -1,7 +1,7 @@
 {
-  "name": "microservice-asa",
+  "name": "postreport",
   "version": "1.0.0",
-  "description": "node api hosted on heroku",
+  "description": "Postreport is a node api hosted on heroku",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
