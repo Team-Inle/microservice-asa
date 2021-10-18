@@ -1,6 +1,7 @@
 const express = require ("express");
 const app = express();
 
+
 // import data from a json
 const importData = require(".//data.json");
 
