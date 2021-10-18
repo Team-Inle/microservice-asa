@@ -51,6 +51,7 @@ function post_file(req, res, file) {
 
 module.exports = {
     convertJsonToExcel: function () {
-        return "Hello";
+        console.log('convertJsonToExcel was run');
+        return "Hello from convertJsonToExcel";
     }
 }
