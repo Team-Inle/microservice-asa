@@ -1,9 +1,9 @@
-# Postreport: the undisputed microservice that does exactly what you want
+# FastRecast: the most reliable file converter you'll ever have the pleasure of meeting.
 
-# Retrieve a post:
+# Convert a .JSON file to a .xlsx file:
 
-https://postreport.herokuapp.com/
+https://fastrecast.herokuapp.com/json_excel
 
-# Retrieve all posts:
+# Convert a .xlsx or .xls file to a .JSON file:
 
-https://postreport.herokuapp.com/posts
+https://fastrecast.herokuapp.com/excel_json

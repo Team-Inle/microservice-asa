@@ -52,6 +52,6 @@ function post_file(req, res, file) {
 module.exports = {
     convertJsonToExcel: function () {
         console.log('convertJsonToExcel was run');
-        return "Hello from convertJsonToExcel";
+        return "FastRecast just converted Json to Excel";
     }
 }

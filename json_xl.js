@@ -17,6 +17,6 @@
 module.exports = {
     convertExcelToJson: function () {
         console.log('convertExcelToJson was run');
-        return "convert Excel to Json";
+        return "FastRecast just converted Excel to Json";
     }
 }
