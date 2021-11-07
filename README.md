@@ -1,8 +1,8 @@
 # FastRecast: the most reliable file converter you'll ever have the pleasure of meeting.
 
-# To convert a .JSON file to a .xlsx file:
+# Convert a .xlsx or .xls file to a .JSON file:
 
-Use the following endpoint: https://fastrecast.herokuapp.com/json_excel
+Use the following endpoint: https://fastrecast.herokuapp.com/excel_json
 
 Sample Python Request:
 
@@ -54,9 +54,9 @@ axios(config)
   });
 ```
 
-# Convert a .xlsx or .xls file to a .JSON file:
+# To convert a .JSON file to a .xlsx file:
 
-Use the following endpoint: https://fastrecast.herokuapp.com/excel_json
+Use the following endpoint: https://fastrecast.herokuapp.com/json_excel
 
 Sample Python Request:
 
