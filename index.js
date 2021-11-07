@@ -54,10 +54,10 @@ const fileStorageEngine = multer.diskStorage({
   },
 });
 
-// Route To Load Index.html page to browser
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
+// // Route To Load Index.html page to browser
+// app.get("/", (req, res) => {
+//   res.sendFile(path.join(__dirname, "index.html"));
+// });
 
 // associate the multer middleware with the specific provided file storage settings
 const upload = multer({ storage: fileStorageEngine });
@@ -66,16 +66,29 @@ const upload = multer({ storage: fileStorageEngine });
 app.post("/json_excel", upload.single("json"), (req, res) => {
   console.log(req.file);
 
+    // crete var to store the json filepath
+    var json_filepath = req.file.path;
+
     // // need to open the file, then parse the content of the file into a json object
-    var jsonObjectData = JSON.parse(fs.readFileSync(req.file.path));
+    var jsonObjectData = JSON.parse(fs.readFileSync(json_filepath));
 
     // create new filename
     var new_filename = req.file.originalname;
     new_filename = new_filename.replace(".json", ".xlsx")
     
-    // send the resulting excel file back using the same filename
+    // send the resulting excel file back using the new filename
     res.status(200).xls(new_filename, jsonObjectData);
     
+    // delete the file from the data storage
+    try {
+        fs.unlinkSync(json_filepath);
+        if (isDebugMode) {
+            console.log("File removed:", json_filepath);
+        };
+    } catch (err) {
+        console.error(err);
+    }
+
 });
 
 
