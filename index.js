@@ -80,14 +80,14 @@ app.post("/json_excel", upload.single("json"), (req, res) => {
     res.status(200).xls(new_filename, jsonObjectData);
     
     // delete the file from the data storage
-    try {
-        fs.unlinkSync(json_filepath);
-        if (isDebugMode) {
-            console.log("File removed:", json_filepath);
-        };
-    } catch (err) {
-        console.error(err);
-    }
+    // try {
+    //     fs.unlinkSync(json_filepath);
+    //     if (isDebugMode) {
+    //         console.log("File removed:", json_filepath);
+    //     };
+    // } catch (err) {
+    //     console.error(err);
+    // }
 
 });
 
