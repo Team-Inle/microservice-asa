@@ -1,8 +1,10 @@
 # FastRecast: the most reliable file converter you'll ever have the pleasure of meeting.
 
-# Convert a .xlsx or .xls file to a .JSON file:
+# Convert a `.xlsx` file to a `.json` file:
 
 Use the following endpoint: https://fastrecast.herokuapp.com/excel_json
+
+Replace `'/PATH/TO/data.xlsx'` with the path to the `.xlsx` file you want to convert.
 
 Sample Python Request:
 
@@ -16,7 +18,6 @@ files=[
   ('excel',('data_format.xlsx',open('/PATH/TO/data.xlsx','rb'),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'))
 ]
 headers = {
-  'Authorization': 'Bearer 702547d3761d435c950ad07e783b18e2',
   'Accept': 'application/json'
 }
 
@@ -38,7 +39,6 @@ var config = {
   method: "post",
   url: "https://fastrecast.herokuapp.com/excel_json",
   headers: {
-    Authorization: "Bearer 702547d3761d435c950ad07e783b18e2",
     Accept: "application/json",
     ...data.getHeaders(),
   },
@@ -54,9 +54,11 @@ axios(config)
   });
 ```
 
-# To convert a .JSON file to a .xlsx file:
+# To convert a `.json` file to a `.xlsx` file:
 
 Use the following endpoint: https://fastrecast.herokuapp.com/json_excel
+
+Replace `'/PATH/TO/data.json'` with the path to the `.json` file you want to convert.
 
 Sample Python Request:
 
@@ -70,7 +72,6 @@ files=[
   ('json',('data.json',open('/PATH/TO/data.json','rb'),'application/json'))
 ]
 headers = {
-  'Authorization': 'Bearer 702547d3761d435c950ad07e783b18e2',
   'Accept': 'application/json'
 }
 
@@ -93,7 +94,6 @@ var config = {
   method: "post",
   url: "https://fastrecast.herokuapp.com/json_excel",
   headers: {
-    Authorization: "Bearer 702547d3761d435c950ad07e783b18e2",
     Accept: "application/json",
     ...data.getHeaders(),
   },
