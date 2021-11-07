@@ -1,5 +1,7 @@
 // references:
 // Multer guide: https://www.youtube.com/watch?v=EVOFt8Its6I
+// convert-excel-to-json: https://www.npmjs.com/package/convert-excel-to-json
+
 
 
 const path = require("path");
@@ -14,19 +16,26 @@ const cors = require("cors");
 const excelToJson = require('convert-excel-to-json');
 
 
+// import package to handle json to excel
+const jsonToExcel = require('json2xls');
+
+
 // install fs (file system) to delete files off the server after we've processed them
 const fs = require("fs");
+const { type } = require("os");
 
 
 // initial app setup
 const app = express();
 
 // debug mode
-var isDebugMode = false;
+var isDebugMode = true;
 
 // set port settings
 let port = process.env.PORT || 5151;
 
+// use middleware to handle json to excel conversion
+app.use(jsonToExcel.middleware)
 
 // install CORS so headers can be accessed
 app.use(cors());
@@ -56,7 +65,17 @@ const upload = multer({ storage: fileStorageEngine });
 // handle a request to upload a json file, process it, then return an excel file
 app.post("/json_excel", upload.single("json"), (req, res) => {
   console.log(req.file);
-  res.send("JSON upload success");
+
+    // // need to open the file, then parse the content of the file into a json object
+    var jsonObjectData = JSON.parse(fs.readFileSync(req.file.path));
+
+    // create new filename
+    var new_filename = req.file.originalname;
+    new_filename = new_filename.replace(".json", ".xlsx")
+    
+    // send the resulting excel file back using the same filename
+    res.status(200).xls(new_filename, jsonObjectData);
+    
 });
 
 
