@@ -2,7 +2,16 @@
 // Multer guide: https://www.youtube.com/watch?v=EVOFt8Its6I
 // convert-excel-to-json: https://www.npmjs.com/package/convert-excel-to-json
 
+// custom function to handle timecard excel creation
+const JtoET = require('./json_xlTimecard');
 
+// custom function to reorder timecard structure
+const rebuildJT = require('./rebuildJSONTimecard');
+
+
+// import functions to handle conversion from CSV to JSON and vice versa
+const CSVtoJSON = require('./csv_json');
+const JSONtoCSV = require('./json_csv');
 
 const path = require("path");
 const express = require("express");
@@ -15,6 +24,8 @@ const cors = require("cors");
 'use strict';
 const excelToJson = require('convert-excel-to-json');
 
+// include this to handle server file to url
+const url = require('url');
 
 // import package to handle json to excel
 const jsonToExcel = require('json2xls');
@@ -80,6 +91,203 @@ app.post("/json_excel", upload.single("json"), (req, res) => {
     res.status(200).xls(new_filename, jsonObjectData);
     
     // delete the file from the data storage
+    try {
+        fs.unlinkSync(json_filepath);
+        if (isDebugMode) {
+            console.log("File removed:", json_filepath);
+        };
+    } catch (err) {
+        console.error(err);
+    }
+
+});
+
+
+
+// handle request to upload a csv file, process it, then return as a json file
+app.post("/csv_json", upload.single("csv"), (req, res) => {
+    if (isDebugMode) {
+        console.log(req.file);
+    };
+
+    // locate the newest uploaded file
+    var csv_data = req.file.path;  
+
+    // convert provided excel to json object
+    const converted_json_object_result = CSVtoJSON.convertCSVToJSON(csv_data);
+
+    console.log(converted_json_object_result);
+
+    // convert json object to json file
+    var json_file_result = JSON.stringify(converted_json_object_result);
+
+
+    if (isDebugMode) {
+        console.log("json_file_result:", json_file_result);
+    };
+
+    // result_params = {'url': }
+    
+    // return the converted json file back to the client
+    res.status(200).send(json_file_result);
+
+    // delete the csv file from the data storage
+    // try {
+    //     fs.unlinkSync(csv_data);
+    //     if (isDebugMode) {
+    //         console.log("File removed:", csv_data);
+    //     };
+    // } catch (err) {
+    //     console.error(err);
+    // }
+
+  });
+
+
+
+// handle a request to upload a json file, process it, then return as a csv
+app.post("/json_csv", upload.single("json"), (req, res) => {
+    console.log(req.file);
+  
+      // crete var to store the json filepath
+      var json_filepath = req.file.path;
+  
+      // // need to open the file, then parse the content of the file into a json object
+      var jsonObjectData = JSON.parse(fs.readFileSync(json_filepath));
+  
+      // create new filename
+      var new_filename = req.file.originalname;
+      new_filename = new_filename.replace(".json", ".xlsx")
+      
+      // send the resulting excel file back using the new filename
+      res.status(200).xls(new_filename, jsonObjectData);
+      
+      // delete the file from the data storage
+      try {
+          fs.unlinkSync(json_filepath);
+          if (isDebugMode) {
+              console.log("File removed:", json_filepath);
+          };
+      } catch (err) {
+          console.error(err);
+      }
+  
+  });
+
+
+
+// // handle a specific request to process a json file for timesheet application, then return an excel file
+// app.post("/json_excel_timesheet", upload.single("json"), (req, res) => {
+    
+//     console.log(req.file);
+
+//     // crete var to store the json filepath
+//     var json_filepath = req.file.path;
+
+//     // need to open the file, then parse the content of the file into a json object
+//     var jsonObjectData = JSON.parse(fs.readFileSync(json_filepath));
+
+//     // create new filename for the XL file
+//     var new_filename = req.file.originalname;
+//     new_filename = new_filename.replace(".json", ".xlsx")
+
+//     // write a new file to the server with the provided filename and json object, obtain the path
+//     // let converted_timesheet_excel_path = JtoET.convertJsonToExcelTimecard(jsonObjectData, new_filename);
+//     // let converted_timesheet_excel_path = JtoET.convertJsonToExcelTimecard(jsonObjectData, new_filename);
+
+
+//     // let final_excel_file_url = url.pathToFileURL(converted_timesheet_excel_path);
+//     let final_excel_file_url = url.createObjectURL(converted_timesheet_excel_path);
+
+//     // read in the new converted file data (have to parse back as JSON to send)
+
+//     // Convert the local excel file back to json object
+//     // const converted_json_object_result = excelToJson({
+//     //     sourceFile: converted_timesheet_excel_path
+//     // });
+
+//     // set up response
+//     let final_response_payload = {"excel": final_excel_file_url};
+
+//     // Convert the JSON back as a downloadable excel file 
+//     res.status(200).send(final_response_payload);
+
+//     // res.status(200).xls(new_filename, converted_json_object_result);
+
+//     // then convert the NEW json back into to excel, name it as the new filename, and send back to client 
+//     // res.status(200).xls(new_filename, convertedJSONTimesheet);
+//     // res.status(200).send('complete');
+
+
+//     // delete the file from the data storage
+//     // try {
+//     //     fs.unlinkSync(json_filepath);
+//     //     if (isDebugMode) {
+//     //         console.log("File removed:", json_filepath);
+//     //     };
+//     // } catch (err) {
+//     //     console.error(err);
+//     // }
+  
+//   });
+
+
+  
+// handle a specific request to process a json file for timesheet application, then return an excel file
+app.post("/json_excel_timesheet", upload.single("json"), (req, res) => {
+    
+    console.log(req.file);
+
+    // crete var to store the json filepath
+    var json_filepath = req.file.path;
+
+    console.log('json_filepath:', json_filepath);
+
+    // need to open the file, then parse the content of the file into a json object
+    var jsonObjectData = JSON.parse(fs.readFileSync(json_filepath));
+
+    // create new filename for the XL file
+    var new_filename = req.file.originalname;
+    new_filename = new_filename.replace(".json", ".xlsx")
+
+    // write a new JSON file to the server with the provided filename and json object, obtain the path
+    let rebuiltJSONTimecardFilepath = rebuildJT.rebuildJSONTimecard(jsonObjectData, new_filename);
+
+    console.log('rebuiltJSONTimecardFilepath:', rebuiltJSONTimecardFilepath);
+
+
+    //joining path of directory 
+    const directoryPath = path.join(__dirname, 'data');
+    //passsing directoryPath and callback function
+    fs.readdir(directoryPath, function (err, files) {
+        //handling error
+        if (err) {
+            return console.log('Unable to scan directory: ' + err);
+        } 
+        //listing all files using forEach
+        files.forEach(function (file) {
+            // Do whatever you want to do with the file
+            console.log(file); 
+        });
+    });
+
+    console.log('HERE', fs.realpathSync(rebuiltJSONTimecardFilepath, []));
+
+    let read_file = fs.readFileSync(rebuiltJSONTimecardFilepath);
+
+    var rebuiltJSONTimecardObjectData = JSON.parse(read_file);
+
+    // Convert the JSON back as a downloadable excel file 
+    res.status(200).xls(new_filename, rebuiltJSONTimecardObjectData);
+
+    // res.status(200).xls(new_filename, converted_json_object_result);
+
+    // then convert the NEW json back into to excel, name it as the new filename, and send back to client 
+    // res.status(200).xls(new_filename, convertedJSONTimesheet);
+    // res.status(200).send('complete');
+
+
+    // delete the file from the data storage
     // try {
     //     fs.unlinkSync(json_filepath);
     //     if (isDebugMode) {
@@ -88,8 +296,9 @@ app.post("/json_excel", upload.single("json"), (req, res) => {
     // } catch (err) {
     //     console.error(err);
     // }
+  
+  });
 
-});
 
 
 // handle request to upload an excel file, process it, then return a json file
@@ -170,7 +379,7 @@ app.listen(port, () => {
 
 // // // import { convertJsonToExcel } from "./xl_json";
 // // const EtoJ = require('./json_xl');
-// // const JtoE = require('./xl_json');
+// // 
 
 
 // // import data from a json
