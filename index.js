@@ -125,21 +125,19 @@ app.post("/csv_json", upload.single("csv"), (req, res) => {
     if (isDebugMode) {
         console.log("json_file_result:", json_file_result);
     };
-
-    // result_params = {'url': }
     
     // return the converted json file back to the client
     res.status(200).send(json_file_result);
 
     // delete the csv file from the data storage
-    // try {
-    //     fs.unlinkSync(csv_data);
-    //     if (isDebugMode) {
-    //         console.log("File removed:", csv_data);
-    //     };
-    // } catch (err) {
-    //     console.error(err);
-    // }
+    try {
+        fs.unlinkSync(csv_data);
+        if (isDebugMode) {
+            console.log("File removed:", csv_data);
+        };
+    } catch (err) {
+        console.error(err);
+    }
 
   });
 
