@@ -115,7 +115,7 @@ app.post("/csv_json", upload.single("csv"), (req, res) => {
     var csv_data = req.file.path;  
 
     // convert provided excel to json object
-    const converted_json_object_result = CSVtoJSON.convertCSVToJSON(csv_data);
+    const converted_json_object_result = CSVtoJSON.convertCSVToJSON_ali(csv_data);
 
     console.log(converted_json_object_result);
 
@@ -131,14 +131,14 @@ app.post("/csv_json", upload.single("csv"), (req, res) => {
     res.status(200).send(json_file_result);
 
     // delete the csv file from the data storage
-    try {
-        fs.unlinkSync(csv_data);
-        if (isDebugMode) {
-            console.log("File removed:", csv_data);
-        };
-    } catch (err) {
-        console.error(err);
-    }
+    // try {
+    //     fs.unlinkSync(csv_data);
+    //     if (isDebugMode) {
+    //         console.log("File removed:", csv_data);
+    //     };
+    // } catch (err) {
+    //     console.error(err);
+    // }
 
   });
 
