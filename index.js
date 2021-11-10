@@ -34,6 +34,7 @@ const jsonToExcel = require('json2xls');
 // install fs (file system) to delete files off the server after we've processed them
 const fs = require("fs");
 const { type } = require("os");
+const { response } = require('express');
 
 
 // initial app setup
@@ -143,6 +144,26 @@ app.post("/csv_json", upload.single("csv"), (req, res) => {
 
 
 
+
+//   create a route for a get request for a file on the server
+
+app.get("/download", function(req, res){
+
+    // obtain the filename that the client is requesting
+    var requested_filename = req.query.file;
+
+    // check if the file exists in the data folder
+    try {
+
+        // if it does, send the data back
+        res.status(200).download("./data/" + requested_filename)
+    } catch (error) {
+
+        // if it does not, send back an error
+        res.status(404).send("invalid filename: ", error)
+    };
+});
+
 // handle a request to upload a json file, process it, then return as a csv
 app.post("/json_csv", upload.single("json"), (req, res) => {
     console.log(req.file);
@@ -153,14 +174,26 @@ app.post("/json_csv", upload.single("json"), (req, res) => {
       // // need to open the file, then parse the content of the file into a json object
       var jsonObjectData = JSON.parse(fs.readFileSync(json_filepath));
   
-      // create new filename
-      var new_filename = req.file.originalname;
-      new_filename = new_filename.replace(".json", ".xlsx")
+    //   // create new filename
+    //   var new_filename = req.file.originalname;
+    //   new_filename = new_filename.replace(".json", "")
+
+      // obtain reference to filename of json file on the server
+      var new_json_filename = req.file.filename;
+      new_json_filename = new_json_filename.replace(".json", "");
+
+      
+
+      // need to create a new .csv file on the server
+      JSONtoCSV.convertJSONtoCSV_ali(jsonObjectData, new_json_filename);
+      
+      // in our response, return the url link to the csv
+      var response_params = {"link": "https://fastrecast.herokuapp.com/download?file="+ new_json_filename + ".csv"};
       
       // send the resulting excel file back using the new filename
-      res.status(200).xls(new_filename, jsonObjectData);
+      res.status(200).send(response_params);
       
-      // delete the file from the data storage
+      // delete the original file (not the converted file) from the data storage
       try {
           fs.unlinkSync(json_filepath);
           if (isDebugMode) {
