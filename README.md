@@ -1,6 +1,6 @@
 # FastRecast: the most reliable file converter you'll ever have the pleasure of meeting.
 
-# Convert a `.csv` file to a `.json` file:
+# Convert a `.csv` file to receive a `.json` as a response:
 
 Use the following endpoint: https://fastrecast.herokuapp.com/csv_json
 
@@ -15,7 +15,7 @@ url = "https://fastrecast.herokuapp.com/csv_json"
 
 payload={}
 files=[
-  ('csv',('data.csv',open('/PATH/TO/csv.xlsx','rb'),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'))
+  ('csv',('data.csv',open('/PATH/TO/data.csv','rb'),'text/csv'))
 ]
 headers = {
   'Accept': 'application/json'
@@ -24,6 +24,7 @@ headers = {
 response = requests.request("POST", url, headers=headers, data=payload, files=files)
 
 print(response.text)
+
 ```
 
 Sample NodeJs Axios Request:
@@ -33,11 +34,11 @@ var axios = require("axios");
 var FormData = require("form-data");
 var fs = require("fs");
 var data = new FormData();
-data.append("excel", fs.createReadStream("/PATH/TO/data.xlsx"));
+data.append("csv", fs.createReadStream("/PATH/TO/data.csv"));
 
 var config = {
   method: "post",
-  url: "https://fastrecast.herokuapp.com/excel_json",
+  url: "https://fastrecast.herokuapp.com/csv_json",
   headers: {
     Accept: "application/json",
     ...data.getHeaders(),
@@ -54,18 +55,18 @@ axios(config)
   });
 ```
 
-# To convert a `.json` file to a `.csv` file:
+# To convert a `.json` file to a `.csv` file, first you must submit a POST request tob obtain a download URL:
 
 Use the following endpoint: https://fastrecast.herokuapp.com/json_csv
 
 Replace `'/PATH/TO/data.json'` with the path to the `.json` file you want to convert.
 
-Sample Python Request:
+Sample Python POST Request:
 
 ```python
 import requests
 
-url = "https://fastrecast.herokuapp.com/json_excel"
+url = "https://fastrecast.herokuapp.com/json_csv"
 
 payload={}
 files=[
@@ -84,32 +85,31 @@ print(response.text)
 Sample NodeJs Axios Request:
 
 ```javascript
-var axios = require("axios");
-var FormData = require("form-data");
+var request = require("request");
 var fs = require("fs");
-var data = new FormData();
-data.append("json", fs.createReadStream("/PATH/TO/data.json"));
-
-var config = {
-  method: "post",
-  url: "https://fastrecast.herokuapp.com/json_excel",
+var options = {
+  method: "POST",
+  url: "https://fastrecast.herokuapp.com/json_csv",
   headers: {
     Accept: "application/json",
-    ...data.getHeaders(),
   },
-  data: data,
+  formData: {
+    json: {
+      value: fs.createReadStream("/PATH/TO/data.json"),
+      options: {
+        filename: "/PATH/TO/data.json",
+        contentType: null,
+      },
+    },
+  },
 };
-
-axios(config)
-  .then(function (response) {
-    console.log(JSON.stringify(response.data));
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
+request(options, function (error, response) {
+  if (error) throw new Error(error);
+  console.log(response.body);
+});
 ```
 
-# Download a converted file from the FastRecast server:
+# Then, following the POST request, you must submit an additional GET request to download a converted file from the FastRecast server:
 
 Use the following endpoint: https://fastrecast.herokuapp.com/download?file={filename}
 
