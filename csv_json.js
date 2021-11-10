@@ -37,10 +37,10 @@ module.exports = {
         console.log(headers);
 
         var current_date = null;
-        var current_day = null;
+        var current_day = 0;
         var current_pto = 0;
-        var current_time_in = null;
-        var current_time_out = null;
+        var current_time_in = 0;
+        var current_time_out = 0;
         var current_breaks = 0;
 
         // iterate over lines
@@ -51,17 +51,21 @@ module.exports = {
            
             var values = csv_lines_array[i].split(",")
 
-            current_date = values[0];
+            current_date = values[0].replace("\n", "");
             // console.log(current_date);
-            current_day = values[1];
+            if (values[1]) { current_day = parseInt(values[1]) } else { current_day = 0};
             // console.log(current_day);
-            current_pto = values[2];
+            // current_pto = parseInt(values[2]);
+            if (values[2]) { current_pto = parseInt(values[2]) } else { current_pto = 0};
             // console.log(current_pto);
-            current_time_in = values[3];
+            // current_time_in = parseInt(values[3]);
+            if (values[3]) { current_time_in = parseInt(values[3]) } else { current_time_in = 0};
             // console.log(current_time_in);
-            current_time_out = values[4];
+            // current_time_out = parseInt(values[4]);
+            if (values[4]) { current_time_out = parseInt(values[4]) } else { current_time_out = 0};
             // console.log(current_time_out);
-            current_breaks = values[5];
+            // current_breaks = parseInt(values[5]);
+            if (values[5]) { current_breaks = parseInt(values[5]) } else { current_breaks = 0};
             // console.log(current_breaks);
 
             var found = false;
