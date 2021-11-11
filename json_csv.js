@@ -4,6 +4,7 @@ const inputFileName = '1636511715321--data.json';
 const outputFileName = '1636511715321--data.csv';
 
 
+const { Console } = require("console");
 const fs = require("fs");
 
 // // RAW works to conver ANY json to ANY csv 
@@ -87,31 +88,64 @@ module.exports = {
 
         // skip the headers (i=1), and itearate over the days
         const days = json_object_data;
-        for (let i=1; i < days.length; i++) {
-            // for each date, save the date, day and PTO
-            var current_date = days[i].Date;
-            var current_day = days[i].Day;
-            var current_pto = days[i].PTO;
 
-            // iterate over timecards within the given day
-            for (let j=0; j < days[i].Timecards.length; j++) {
-                // for each timecard, write a row to the excel file
-                var current_time_in = days[i].Timecards[j].In;
-                var current_time_out = days[i].Timecards[j].Out;
-                var current_breaks = days[i].Timecards[j].Break;
+        console.log('days', days);
 
-                // use the date, day, PTO, Time In Time Out and Breaks
+        for (const [Date, Value] of Object.entries(days)) {
+            console.log(Date);
+            console.log(Value);
+
+            var current_date = Date;
+            var current_day = Value.Day;
+            var current_pto = Value.PTO;
+
+            for (let j=0; j < Value.Timecards.length; j++) {
+
+                var current_time_in = Value.Timecards[j].In;
+                var current_time_out = Value.Timecards[j].Out;
+                var current_breaks = Value.Timecards[j].Break;
+
+
                 var current_row = [current_date, current_day, current_pto, current_time_in, current_time_out, current_breaks];
 
-                // add the row data to the csv string
-                csv_string += current_row.join(",") + "\r\n";
-                };
 
-            // need to reset the date day and PTO
+                csv_string += current_row.join(",") + "\r\n";
+
+            }
+
             current_date = current_day = null;
             current_pto = 0
 
-            };
+        } 
+        
+        // for (let i=1; i < days.length; i++) {
+
+
+
+        //     // for each date, save the date, day and PTO
+        //     var current_date = days[i].Date;
+        //     var current_day = days[i].Day;
+        //     var current_pto = days[i].PTO;
+
+        //     // iterate over timecards within the given day
+        //     for (let j=0; j < days[i].Timecards.length; j++) {
+        //         // for each timecard, write a row to the excel file
+        //         var current_time_in = days[i].Timecards[j].In;
+        //         var current_time_out = days[i].Timecards[j].Out;
+        //         var current_breaks = days[i].Timecards[j].Break;
+
+        //         // use the date, day, PTO, Time In Time Out and Breaks
+        //         var current_row = [current_date, current_day, current_pto, current_time_in, current_time_out, current_breaks];
+
+        //         // add the row data to the csv string
+        //         csv_string += current_row.join(",") + "\r\n";
+        //         };
+
+        //     // need to reset the date day and PTO
+        //     current_date = current_day = null;
+        //     current_pto = 0
+
+        //     };
 
         // console.log(csv_string);
 

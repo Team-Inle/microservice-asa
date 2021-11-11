@@ -194,14 +194,14 @@ app.post("/json_csv", upload.single("json"), (req, res) => {
       res.status(200).send(response_params);
       
       // delete the original file (not the converted file) from the data storage
-      try {
-          fs.unlinkSync(json_filepath);
-          if (isDebugMode) {
-              console.log("File removed:", json_filepath);
-          };
-      } catch (err) {
-          console.error(err);
-      }
+    //   try {
+    //       fs.unlinkSync(json_filepath);
+    //       if (isDebugMode) {
+    //           console.log("File removed:", json_filepath);
+    //       };
+    //   } catch (err) {
+    //       console.error(err);
+    //   }
   
   });
 
